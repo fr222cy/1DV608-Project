@@ -7,17 +7,18 @@ private static $tips = array();
 private static $answer;
 private static $submit;
 
-
-    public function renderQuizPage()
+    
+    public function render()
     {
     
-     echo '<!DOCTYPE html>
-          <html>
-            <head>
-              <meta charset="utf-8">
-              <title>Quiz</title>
-            </head>
-            <body>
+     return $this->HTMLQuizPage();
+    }
+    
+    
+    public function HTMLQuizPage()
+    {
+    
+     return '
             
               <div id="head">
                 <h1>Daily Quiz (mock-up)</h1>
@@ -35,11 +36,11 @@ private static $submit;
                   <label>Quiz ends in 10h:2min:40sec</label>
               </div>
               <footer>
-              <a href=?Admin-Page>Admin Page</a>
+              <a href=?admin>Admin Page</a>
               </footer>
                 
-             </body>
-          </html>
+          
+         
         ';
     }
 }
