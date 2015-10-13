@@ -7,7 +7,6 @@ class LoginController
         $this->loginView = $loginView;
         $this->lv = $lv;
         $this->lm = $lm;
-    
     }
     
     
@@ -27,12 +26,12 @@ class LoginController
         {
             try
             {
-              return $this->lm->checkLogin($this->loginView->getPassword());
+             $this->lm->checkLogin($this->loginView->getPassword());
             }
             catch(Exception $e)
             {
               $this->loginView->setMessage($e->getMessage());
-              return false;
+             
             }
         }      
     }

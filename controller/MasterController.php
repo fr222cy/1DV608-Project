@@ -9,7 +9,7 @@ require_once('controller/LoginController.php');
 require_once('model/LoginModel.php');
 require_once('model/AuthModel.php');
 require_once('model/QuizModel.php');
-
+require_once('model/AdminDAL.php');
 class MasterController
 {
   
@@ -18,14 +18,15 @@ class MasterController
         //MODELS
         $loginModel = new LoginModel();
         $quizModel = new QuizModel();
+        $adminDAL = new AdminDAL();
         //VIEWS
         $quizView = new QuizView();
         $navigationView = new NavigationView();
         $layoutView = new LayoutView();
-        $adminView =  new AdminView();
+        $adminView =  new AdminView($adminDAL);
         $loginView = new LoginView();
         //CONTROLLERS
-        $adminController = new AdminController($adminView, $layoutView, $quizModel);
+        $adminController = new AdminController($adminView, $layoutView, $quizModel, $adminDAL);
         $loginController = new LoginController($loginView, $layoutView, $loginModel, $adminController);
         
         
@@ -44,7 +45,6 @@ class MasterController
             {
              $loginController->renderLogin();
             }
-            
         }
         else
         {

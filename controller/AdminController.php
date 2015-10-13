@@ -3,18 +3,20 @@
 
 class AdminController
 {
-    public function __construct(AdminView $av, LayoutView $lv, QuizModel $qm)
+    public function __construct(AdminView $av, LayoutView $lv, QuizModel $qm, AdminDAL $ad)
     {
         $this->av = $av;
         $this->lv = $lv;
         $this->qm = $qm;
+        $this->ad = $ad;
     }
     
     
     public function initAdmin()
     {
-        //$this->av->questionPost();
+        $this->adminAddQuestion();
         $this->adminLogout();
+      
     }
     
     public function renderAdminPage()
@@ -25,6 +27,22 @@ class AdminController
     public function adminAddQuestion()
     {
         
+        if($this->av->questionPost())
+        {
+          
+          try
+          {
+            $questionObject = $this->qm->checkQuestion($this->av->getQuestion(), $this->av->getTips());  
+            $this->ad->saveQuestion($questionObject);
+            $this->av->printSuccess();
+            
+          }
+          catch(Exception $e)
+          {
+              $this->av->setMessage($e->getMessage());
+          }
+            
+        }
         
     }
     
@@ -36,5 +54,6 @@ class AdminController
         }
         
     }
+    
    
 }
