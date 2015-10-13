@@ -3,44 +3,38 @@
 
 class AdminController
 {
-    public function __construct(AdminView $av, LayoutView $lv, LoginModel $lm)
+    public function __construct(AdminView $av, LayoutView $lv, QuizModel $qm)
     {
         $this->av = $av;
         $this->lv = $lv;
-        $this->lm = $lm;
+        $this->qm = $qm;
     }
     
     
-    public function init()
+    public function initAdmin()
     {
-        $this->AdminWantsToLogin();
-        $this->AdminWantsToLogout();
+        //$this->av->questionPost();
+        $this->adminLogout();
+    }
+    
+    public function renderAdminPage()
+    {
         $this->lv->RenderLayout($this->av);
     }
     
-    public function AdminWantsToLogin()
+    public function adminAddQuestion()
     {
-        if($this->av->loginPost())
-        {
-            
-            try
-            {
-              $this->lm->checkLogin($this->av->getPassword());
-              
-            }
-            catch(Exception $e)
-            {
-              $this->av->setMessage($e->getMessage());
-            }
-        }      
+        
+        
     }
     
-    public function AdminWantsToLogout()
+    public function adminLogout()
     {
         if($this->av->logout())
         {
-            $this->lm->logout();
+            AuthModel::Authorize(false);
         }
         
     }
+   
 }

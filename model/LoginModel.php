@@ -5,24 +5,14 @@ session_start();
 class LoginModel
 {
     
-    public function __construct()
-    {
-        if(!isset($_SESSION["isLoggedIn"]))
-        {
-            $_SESSION["isLoggedIn"] = false;
-        }
-        
-    }
     
     public function checkLogin($password)
     {
-        
-        
         $correctPW = "kiosk";
         
         if($correctPW == $password)
         {
-            $_SESSION["isLoggedIn"] = true;
+            AuthModel::Authorize(true);
             return true;
         }
         else 
@@ -30,12 +20,5 @@ class LoginModel
             throw new Exception("Wrong Password!");
         }
     }
-    
-    public function logout()
-    {
-        $_SESSION["isLoggedIn"] = false;
-        unset($_SESSION["isLoggedIn"]);
-    }
-    
     
 }

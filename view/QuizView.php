@@ -1,16 +1,13 @@
 <?php
-
 class QuizView
 {
 private static $question;  
 private static $tips = array();
 private static $answer;
 private static $submit;
-
     
     public function render()
     {
-    
      return $this->HTMLQuizPage();
     }
     
@@ -20,10 +17,6 @@ private static $submit;
     
      return '
             
-              <div id="head">
-                <h1>Daily Quiz (mock-up)</h1>
-              </div>
-              
               <div id="quizArea">
                   <h3>Question will be here!</h3><br>
                   <label>Tip 1</label><br>
