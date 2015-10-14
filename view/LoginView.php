@@ -39,7 +39,7 @@ private static $message;
                   
               </div>
               <footer>
-              <a href=?>Back To Login!</a>
+              <a href=?>Back To Quiz!</a>
               </footer>
       '; 
     }

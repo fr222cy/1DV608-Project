@@ -3,7 +3,7 @@
 
 class AdminController
 {
-    public function __construct(AdminView $av, LayoutView $lv, QuizModel $qm, AdminDAL $ad)
+    public function __construct(AdminView $av, LayoutView $lv, QuestionModel $qm, AdminDAL $ad)
     {
         $this->av = $av;
         $this->lv = $lv;
@@ -32,7 +32,7 @@ class AdminController
           
           try
           {
-            $questionObject = $this->qm->checkQuestion($this->av->getQuestion(), $this->av->getTips());  
+            $questionObject = $this->qm->checkQuestion($this->av->getQuestion(), $this->av->getTips(), $this->av->getAnswer());  
             $this->ad->saveQuestion($questionObject);
             $this->av->printSuccess();
             

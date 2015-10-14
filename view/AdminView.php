@@ -5,10 +5,11 @@ class AdminView
 {
 
 private static $question = "AdminView::Question";
-private static $submit = "AdminView::Submit";
-private static $logout = "AdminView::Logout";
+private static $correctAnswer = "AdminView::CorrectAnswer";
 private static $tip1 = "AdminView::Tip1";
 private static $tip2 = "AdminView::Tip2";
+private static $submit = "AdminView::Submit";
+private static $logout = "AdminView::Logout";
 private static $showQuestions = "AdminView::ShowQuestions";
 private static $message = "";
 
@@ -37,6 +38,10 @@ private static $message = "";
 			        <p>'. self::$message .'</p>
 			        <label for="' . self::$question . '">Question :</label>
 			        <input type="text" id="' . self::$question . '" name="' . self::$question . '" /> <br>
+			        
+			        <label for="' . self::$correctAnswer . '">Answer :</label>
+			        <input type="text" id="' . self::$correctAnswer . '" name="' . self::$correctAnswer . '" /> <br>
+			        
                     
                     <label for="' . self::$tip1 . '">Tip 1 :</label>
 			        <input type="text" id="' . self::$tip1 . '" name="' . self::$tip1 . '" /> <br>
@@ -84,6 +89,11 @@ private static $message = "";
         return $_POST[self::$question];
     }
     
+    public function getAnswer()
+    {
+        return $_POST[self::$correctAnswer];
+    }
+    
     public function getTips()
     {
         $tip1 = $_POST[self::$tip1];
@@ -92,7 +102,6 @@ private static $message = "";
         $tips = array($tip1,$tip2);
         
         return $tips;
-        
     }
    
     public function logout()
@@ -105,35 +114,33 @@ private static $message = "";
         {
             return false;
         }
-        
     }
     
     public function showQuestions()
     {
-        //WOW YOU ARE SO SMART PHILIP!
-        //HOW DID U COME UP WITH THIS?!!!
-        
+        //TODO FIX:  Invalid argument supplied for foreach() when theres no questions
         if(isset($_POST[self::$showQuestions]))
         {
             $questions = $this->ad->GetQuestions();
+            $count = 1;
+            $htmlString = '<h3>Active And Upcoming Questions</h3><table>';
             
-            $htmlStart = '<table>';
-            
-            foreach($questions as $question)
+            foreach ($questions as $question)
             {
-                $htmlpreMid .= '
-                <tr>
-                <td>'.$question->getQuestion().'</td>';
-                
-                foreach ($question->getTips() as $tip)
-                {
-                $htmlMid .= '<td>'.$tip.'</td>';
-                }
-                
-                $htmlMidend .= '</tr>';
+                $htmlString .=  '<tr><td>'.$count.'</td>
+                <td>|'. $question->Question(). '</td>
+                <td>|'. $question->CorrectAnswer().'|</td>';
+                $count++;
+            foreach ($question->Tips() as $tips)
+            {
+                $htmlString .= '<td>'. $tips . '|</td>';
             }
-           $htmlEnd = '</table>';
-            return $htmlStart.=$htmlpreMid.=$htmlMid.=$htmlMidend.=$htmlEnd;
+                $htmlString .= '</tr>';
+            } 
+            
+            $htmlString .= '</table>';
+            
+            return $htmlString; 
         }
     }
 }

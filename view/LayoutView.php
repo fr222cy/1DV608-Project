@@ -13,7 +13,7 @@ class LayoutView
               <title>Quiz</title>
             </head>
             <body>
-            <h1>Quiz</h1>
+            <h1>Your Daily Quiz</h1>
             '. $v->render().'
             </body>
           </html>
