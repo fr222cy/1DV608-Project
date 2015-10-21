@@ -12,7 +12,7 @@ class QuizController
     
     public function init()
     {
-        $this->isQuizActive();
+   
         $this->questionForHTML();
         $this->userAnswer();
     }
@@ -22,22 +22,24 @@ class QuizController
         $this->lv->RenderLayout($this->qv);
     }
     
-    public function isQuizActive()
-    {
-        $this->qv->isQuizActive($this->qm->isQuizActive());
-    }
-    
     public function userAnswer()
     {
         if($this->qv->post())
         {
             try
             {
-                $this->qm->checkAnswer($this->qv->getAnswer());
+                $this->qm->canGuess($this->qv->getUserID());
+                if($this->qm->checkAnswer($this->qv->getAnswer()))
+                {
+                    $this->qv->isQuizFinished();
+                }
+                
             }
             catch(Exception $e)
             {
-                echo $e->getMessage();
+                //The User made a guess, save it.
+                
+                $this->qv->setMessage($e->getMessage());
             }
         }
         
@@ -45,7 +47,14 @@ class QuizController
     
     public function questionForHTML()
     {
-        $this->qv->setQuestion($this->qm->questionForHTML());
+        try
+        {
+         $this->qv->setQuestion($this->qm->questionForHTML());   
+        }
+        catch(Exception $e)
+        {
+            $this->qv->setMessage($e->getMessage());
+        }
     }
 
 

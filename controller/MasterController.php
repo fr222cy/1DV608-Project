@@ -12,7 +12,8 @@ require_once('model/AuthModel.php');
 require_once('model/QuestionModel.php');
 require_once('model/AdminDAL.php');
 require_once('model/QuizModel.php');
-
+require_once('model/Timer.php');
+require_once('model/UserDAL.php');
 class MasterController
 {
  

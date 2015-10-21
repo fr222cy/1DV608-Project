@@ -9,6 +9,8 @@ class LayoutView
         echo'<!DOCTYPE html>
           <html>
             <head>
+              
+              <script src="misc/countdown.js"></script>
               <meta charset="utf-8">
               <title>Quiz</title>
             </head>

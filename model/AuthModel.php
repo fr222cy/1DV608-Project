@@ -17,14 +17,18 @@ class AuthModel
     }
     public static function IsAuthorized()
     {
-        if($_SESSION['LoggedIn'])
+    if(isset($_SESSION['LoggedIn']))
+    {
+       if($_SESSION['LoggedIn'])
         {
             return true;    
         }
         else
         {
            return false; 
-        }
+        }  
+    }
+       
     }
     
     
