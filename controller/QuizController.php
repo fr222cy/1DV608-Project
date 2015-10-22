@@ -12,9 +12,9 @@ class QuizController
     
     public function init()
     {
-   
         $this->questionForHTML();
         $this->userAnswer();
+        $this->triesLeftForHTML();
     }
     
     public function renderQuiz()
@@ -26,23 +26,25 @@ class QuizController
     {
         if($this->qv->post())
         {
-            try
-            {
-                $this->qm->canGuess($this->qv->getUserID());
+            
+            //The User made a guess, save it.
+            if($this->qm->canGuess($this->qv->getUserID(), $this->qv->getAnswer()))
+            {   
                 if($this->qm->checkAnswer($this->qv->getAnswer()))
                 {
-                    $this->qv->isQuizFinished();
+                    //Check if the guess was correct, call QuizFinished!
+                    $this->qv->QuizFinished();
+                } 
+                else
+                {
+                    $this->qv->wrongAnswer();
                 }
-                
             }
-            catch(Exception $e)
+            else
             {
-                //The User made a guess, save it.
-                
-                $this->qv->setMessage($e->getMessage());
+                $this->qv->noMoreAttempts();
             }
         }
-        
     }
     
     public function questionForHTML()
@@ -55,6 +57,11 @@ class QuizController
         {
             $this->qv->setMessage($e->getMessage());
         }
+    }
+    //Gets triesLeft from model, send it to the view.
+    public function triesLeftForHTML()
+    {
+        $this->qv->triesLeft($this->qm->getTriesToHTML());
     }
 
 

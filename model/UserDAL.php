@@ -20,11 +20,9 @@ class UserDAL
             $this->dates = array();
         }
         
-        
         $serialized = serialize($this->dates);
         
         file_put_contents($this->binFile,$serialized);
-        
     }
     
     public function get()

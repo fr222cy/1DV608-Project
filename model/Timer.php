@@ -86,7 +86,13 @@ class Timer
     {
         $hoursToOpen = ($this->hourClose + 1) - $this->hour + $this->hourOpen;
         
-        return time() + ($hoursToOpen * 3600);
+        $date = new DateTime("now");
+        var_dump($date);
+        $date->add(new DateInterval("P1D"));
+        $date->setTime(12,0,0);
+        
+        
+        return $date->format("U"); //idate('U') + ($hoursToOpen * 3600);
     }
      
 }

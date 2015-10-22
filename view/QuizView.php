@@ -1,4 +1,5 @@
 <?php
+
 class QuizView
 {
 private static $question = "QuizView::Question";  
@@ -6,45 +7,50 @@ private static $answer = "QuizView::Answer";
 private static $tip1 = "QuizView::Tip1"; 
 private static $tip2 = "QuizView::Tip2"; 
 private static $submitAnswer = "QuizView::SubmitAnswer";  
+private static $submitUsername = "QuizView::Username";
 private static $message;
 private static $finished;
 private static $user = "user";
+
      public function __construct()
      {
-      $this->time = new Timer();
-     
-     if(!isset($_COOKIE[self::$user]))
-     {
-    
-     $value = sha1(time());
-     setcookie(self::$user , $value , $this->time->CookieExpire(), "/");
-     }
+      
+         $this->time = new Timer();
+         
+         if(!isset($_COOKIE[self::$user]))
+         {
+            $value = sha1(time());
+            setcookie(self::$user , $value , $this->time->CookieExpire(), "/");
+         }
       
      }
 
      public function render()
      {
-     if(self::$finished)
-     {
-       self::$finished = false;
-       return $this->HTMLSuccessQuizPage();
-     }
+        if(self::$finished)
+        {
+           self::$finished = false;
+           return $this->HTMLSuccessQuizPage();
+        }
      
-      if($this->time->isQuizOpen())
-      {
-        return $this->HTMLOpenQuizPage();
-      }
-      else
-      {
-        return $this->HTMLClosedQuizPage();
-      }
+        if($this->time->isQuizOpen())
+        {
+           return $this->HTMLOpenQuizPage();
+        }
+        
+        else
+        {
+           return $this->HTMLClosedQuizPage();
+        }
     }
     
-    public function isQuizFinished()
+    //if called -> sets finished to true.
+    public function QuizFinished()
     {
-     self::$finished = true;
+        self::$finished = true;
     }
     
+    //Returns the SuccessPage
     public function HTMLSuccessQuizPage()
     {
      return '
@@ -52,10 +58,19 @@ private static $user = "user";
         <h4>You Won!</h4>
         
         <p>You were the first one to answer the question correctly today!</p>
-        <a href=?>Back to Quiz</a> 
+        <p>To show you as the winner you have to enter a username.</p>
+        
+          <form method="post" > 
+		   <fieldset>
+			  <input type="" id="' . self::$user . '" name="' . self::$user . '" />
+              <input type="submit" name="' . self::$submitUsername . '" value="Submit Username" /><br>
+           </fieldset>
+          </form>
+        
+        
      ';
     }
-    
+    //Returns the Open Quiz
     public function HTMLOpenQuizPage()
     {
     
@@ -65,12 +80,12 @@ private static $user = "user";
                   <label>Tip 1: '.self::$tip1.'</label><br>
                   <label>Tip 2: '.self::$tip2.'</label><br>
                   <form method="post" > 
-				              <fieldset>
-				              <p>'. self::$message .'</p>
-                  <input type="" id="' . self::$answer . '" name="' . self::$answer . '" />
-                  <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" /><br>
-                  <p>You have Unlimited tries left </p>
-                  </fieldset>
+				   <fieldset>
+				     <p>'. self::$message .'</p>
+                     <input type="" id="' . self::$answer . '" name="' . self::$answer . '" />
+                     '. $this->renderSubmit() .'
+                     '.$this->renderTriesLeft().'
+                   </fieldset>
                   </form>
                   
                   '. $this->quizCloseTimer() .'
@@ -80,6 +95,8 @@ private static $user = "user";
               </footer>
         ';
     }
+    
+    //Returns the Closed Quiz
     public function HTMLClosedQuizPage()
     {
     
@@ -94,84 +111,115 @@ private static $user = "user";
               <footer>
               <a href=?admin>Admin Page</a>
               </footer>
-                
         ';
     }
-    /*
-    public function CookieCounter()
-    {
-     
-     if(isset($_COOKIE[self::$user]))
-     {
-      return $_COOKIE[self::$user];
-     }
-     else
-     {
-      return 3;
-     }
-     
-    }
-    */
+    
     public function post()
     {
-     
         if(isset($_POST[self::$submitAnswer]))
         {
-         var_dump($_COOKIE[self::$user]);
          
-         if(isset($_COOKIE[self::$user]))
-         {
-         return true;
-         }
+        if(isset($_COOKIE[self::$user]))
+        {
+            return true;
+        }
         
         }
         else
         {
-        return false;
+            return false;
         }
     }
     
     public function getAnswer()
     {
-     return $_POST[self::$answer];
+        return $_POST[self::$answer];
     }
     
     public function getUserID()
     {
-     return $_COOKIE[self::$user];
+        return $_COOKIE[self::$user];
     }
     
     public function setQuestion($question)
     {
      
-     self::$question = $question->Question();
+        self::$question = $question->Question();
      
+        $tips = $question->Tips();
      
-     $tips = $question->Tips();
-     
-     if($this->time->shouldTip1Show())
-     {
-      self::$tip1 = $tips[0];
-     }
-     else
-     {
-      self::$tip1 = " Available at 15:00.";
-     }
-     
-     if($this->time->shouldTip2Show())
-     {
-      self::$tip2 = $tips[1];
-     }
-     else
-     {
-      self::$tip2 = " Available at 18:00.";
-     }
+        if($this->time->shouldTip1Show())
+        {
+           self::$tip1 = $tips[0];
+        }
+        else
+        {
+           self::$tip1 = " Available at 15:00.";
+        }
+        
+        if($this->time->shouldTip2Show())
+        {
+           self::$tip2 = $tips[1];
+        }
+        else
+        {
+           self::$tip2 = " Available at 18:00.";
+        }
      
     }
     
+    public function renderSubmit()
+    {
+        if($this->triesLeft <= 0 && !is_null($this->triesLeft))
+        {
+            return '
+            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" disabled/><br>
+            ';
+        }
+        else
+        {
+           return  '
+            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" /><br>
+            '; 
+        }
+        
+    }
+    
+    public function triesLeft($amount)
+    {
+       $this->triesLeft = $amount;
+    }
+    
+    public function renderTriesLeft()
+    {
+       
+        if($this->triesLeft <=0 && !is_null($this->triesLeft))
+        {
+            return '<p> You have 0 tries left</p>';
+        }
+        else if(!is_null($this->triesLeft))
+        {
+            return '<p> You have '.$this->triesLeft.' tries left</p>';
+        }
+        else
+        {
+            return '';
+        }
+    }
+   
     public function setMessage($message)
     {
-      self::$message = $message;
+        self::$message = $message;
+    }
+    
+    public function wrongAnswer()
+    {
+        $this->setMessage("Ouch! Wrong answer.");
+    }
+    
+    public function noMoreAttempts()
+    {
+        $this->setMessage("You are out of attempts for today.<br> Come back tomorrow at 12:00!");
     }
     
     public function quizCloseTimer()
@@ -195,14 +243,15 @@ private static $user = "user";
     }
     
       public function quizOpenTimer()
-    {
+     {
      return
      ' 
       The Quiz will open in <span id="countdown-holder"/>
       <script>
       var clock = document.getElementById("countdown-holder")
       , targetDate = new Date();
-       targetDate.setHours(12);
+       targetDate.set
+       targetDate.setHours(12+24);
        targetDate.setMinutes(0);
        targetDate.setSeconds(0);
        

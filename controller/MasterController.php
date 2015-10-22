@@ -22,13 +22,14 @@ class MasterController
         //MODELS
         $loginModel = new LoginModel();
         $questionModel = new QuestionModel();
+        $userDAL = new UserDAL();
         $adminDAL = new AdminDAL();
-        $quizModel = new QuizModel($adminDAL);
+        $quizModel = new QuizModel($adminDAL, $userDAL);
         //VIEWS
         $quizView = new QuizView();
         $navigationView = new NavigationView();
         $layoutView = new LayoutView();
-        $adminView =  new AdminView($adminDAL);
+        $adminView =  new AdminView($adminDAL, $userDAL);
         $loginView = new LoginView();
         //CONTROLLERS
         $adminController = new AdminController($adminView, $layoutView, $questionModel, $adminDAL);
@@ -45,18 +46,17 @@ class MasterController
             
             if(AuthModel::IsAuthorized())
             {
-             $adminController->renderAdminPage();
+                $adminController->renderAdminPage();
             }
             else
             {
-             $loginController->renderLogin();
+                $loginController->renderLogin();
             }
         }
         else
         {
             $quizController->init();
             $quizController->renderQuiz();
-            
         }
     }
     

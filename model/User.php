@@ -7,11 +7,10 @@ class User
     private $tries;
     private $userID;
     
-    public function __construct($userID)
+    public function __construct($userID, $tries)
     {
         $this->userID = $userID;
-        $this->tries = 3;
-        
+        $this->tries = $tries;
     }
     
     public function getUserID()
@@ -26,7 +25,8 @@ class User
     
     public function reduceTriesByOne()
     {
-        $this->tries -1;
+        $this->tries--;
     }
+  
     
 }

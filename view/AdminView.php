@@ -11,11 +11,13 @@ private static $tip2 = "AdminView::Tip2";
 private static $submit = "AdminView::Submit";
 private static $logout = "AdminView::Logout";
 private static $showQuestions = "AdminView::ShowQuestions";
+private static $showUsers = "AdminView::ShowUsers";
 private static $message = "";
 
-    public function __construct(AdminDAL $ad)
+    public function __construct(AdminDAL $ad, UserDAL $ud)
     {
         $this->ad = $ad;
+        $this->ud = $ud;
     }
 
     public function render()
@@ -55,10 +57,13 @@ private static $message = "";
 				
 			<input type="submit" name="' . self::$logout . '" value="Logout" />
 			<input type="submit" name="' . self::$showQuestions . '" value="Show Questions" />
+			<input type="submit" name="' . self::$showUsers . '" value="Show users" />
 			
 			
 			</form>
-            '. $this->showQuestions() .'  
+            '. $this->showQuestions() .' 
+            '. $this->showUsers() .'  
+            
       ';
     }
     
@@ -118,7 +123,7 @@ private static $message = "";
     
     public function showQuestions()
     {
-        //TODO FIX:  Invalid argument supplied for foreach() when theres no questions
+       
         if(isset($_POST[self::$showQuestions]))
         {
             $questions = $this->ad->GetQuestions();
@@ -137,6 +142,40 @@ private static $message = "";
             }
                 $htmlString .= '</tr>';
             } 
+            
+            $htmlString .= '</table>';
+            
+            return $htmlString; 
+        }
+    }
+    
+    public function showUsers()
+    {
+         if(isset($_POST[self::$showUsers]))
+        {
+            $dates = $this->ud->get();
+            
+            if(empty($dates))
+            {
+              return "<h3>No Users</h3>";  
+            }
+            
+            $count = 1;
+            $htmlString = '<h3>Users on dates</h3><table>';
+            
+            foreach ($dates as $date)
+            {
+                $htmlString .=  '<tr><td>DATE: '. $date->getQuizTime(). '</td></tr>';
+                
+            foreach ($date->getUsers() as $user)
+            {
+                $htmlString .= '<tr><td> '.$count.'. |ID:'. $user->getUserID() . '|</td>
+                                <td> Tries Left: '. $user->getTries().'</td></tr>';
+                                $count++;
+            }
+                
+                
+            }
             
             $htmlString .= '</table>';
             

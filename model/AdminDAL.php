@@ -14,7 +14,7 @@ class AdminDAL
         $this->questions = array();
         $this->binFile = 'data/questions.bin';
     }
-    
+    //Saves the Questioobject to questions.bin.
     public function saveQuestion($questionObject)
     {
         $this->questions = $this->getQuestions();
@@ -29,8 +29,8 @@ class AdminDAL
         
         file_put_contents($this->binFile,$serialized);
     }
-    
-    public function removeQuestion($answer)
+    //removes the first index..
+    public function removeQuestion()
     {
         $this->questions = $this->getQuestions();
         array_shift($this->questions);
