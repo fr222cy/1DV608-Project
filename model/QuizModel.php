@@ -1,21 +1,26 @@
 <?php
 require_once('model/User.php');
 require_once('model/QuizDate.php');
+require_once('model/Win.php');
+
 class QuizModel
 {
     const DATE_FORMAT = "Y-m-d"; 
 
-    public function __construct(AdminDAL $ad, UserDAL $ud)
+    public function __construct(AdminDAL $ad, UserDAL $ud, WinDAL $wd)
     {
-        $this->userDAL = $ud;
         $this->questions = $ad->getQuestions();
-        $this->ad = $ad;
+        $this->userDAL = $ud;
+        $this->winDAL = $wd;
+        $this->adminDAL = $ad;
         $this->triesLeft = null;
     }
+    
     public function getDate()
     {
         return date(self::DATE_FORMAT);    
     }
+    
     public function canGuess($userID, $answer)
     {
         //Retrieve all Dates with users
@@ -44,8 +49,8 @@ class QuizModel
             
             $this->triesLeft = $user->getTries();
             
-            //This is quite an "Ugly hack" but it works.
-            if($this->triesLeft <= 0 && !$this->checkAnswer($answer))
+            //This is quite an "Ugly hack" but it works :)
+            if($this->triesLeft <= 0 && !$this->isCorrectAnswer($answer))
             {
                 return false;
             }
@@ -68,25 +73,21 @@ class QuizModel
         $this->userDAL->save($dates);
         return true;
     }
+    
     public function getTriesToHTML()
     {
         return $this->triesLeft;
     }
+    
+    //Takes in the answer, if it was correct, then remove the question and return true.
     public function checkAnswer($answer)
     {
         $answer = strtolower($answer);
-        $correctAnswer = null;
-        
-        //Gets the Correct Answer!
-        if(!empty($this->questions))
-        {
-        $correctAnswer = strtolower($this->questions[0]->CorrectAnswer());
-        }    
         
         //If the answer is correct, remove the current question
-        if($answer == $correctAnswer)
+        if($this->isCorrectAnswer($answer))
         {
-            $this->ad->removeQuestion();
+            $this->adminDAL->removeQuestion();
             return true;
         }
         else
@@ -94,6 +95,42 @@ class QuizModel
             return false;
         }
     }
+    
+    public function isCorrectAnswer($answer)
+    {
+        $correctAnswer = null;
+        
+        //Gets the Correct Answer!
+        if(!empty($this->questions))
+        {
+            $correctAnswer = strtolower($this->questions[0]->CorrectAnswer());
+        }    
+        
+        if($answer == $correctAnswer)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
+    }
+    
+    //Takes the name, And creates a object of the name and the date of the win.
+    //Then saves it to the .bin-file.
+    public function closeQuiz($winningName)
+    {
+        $winObject = new Win($winningName);
+        $this->winDAL->save($winObject);
+    }
+    
+    
+    public function isQuizWonToday()
+    {
+        return $this->winDAL->getDay(new DateTime("now")) != null;
+    }
+    
     public function questionForHTML()
     { 
         if(!empty($this->questions))
@@ -102,5 +139,6 @@ class QuizModel
         }
         throw new Exception("No question available.");
     }
+    
     
 }

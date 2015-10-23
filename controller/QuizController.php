@@ -12,9 +12,11 @@ class QuizController
     
     public function init()
     {
+        $this->isWon();
         $this->questionForHTML();
         $this->userAnswer();
         $this->triesLeftForHTML();
+        
     }
     
     public function renderQuiz()
@@ -30,10 +32,11 @@ class QuizController
             //The User made a guess, save it.
             if($this->qm->canGuess($this->qv->getUserID(), $this->qv->getAnswer()))
             {   
+                //Check if the answer was correct!
                 if($this->qm->checkAnswer($this->qv->getAnswer()))
                 {
-                    //Check if the guess was correct, call QuizFinished!
-                    $this->qv->QuizFinished();
+                    
+                    $this->qv->userAnsweredRight();
                 } 
                 else
                 {
@@ -63,6 +66,21 @@ class QuizController
     {
         $this->qv->triesLeft($this->qm->getTriesToHTML());
     }
-
-
+    
+ 
+    public function isWon()
+    {
+        //Has the user has typed in a name after winning?.
+        if($this->qv->winPost())
+        {
+            //Then Close the quiz.
+            $this->qm->closeQuiz($this->qv->getName());
+        }
+        
+        elseif ($this->qm->isQuizWonToday())
+        {
+            $this->qv->quizWon();
+        }
+        
+    }
 }

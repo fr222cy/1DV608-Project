@@ -14,19 +14,22 @@ require_once('model/AdminDAL.php');
 require_once('model/QuizModel.php');
 require_once('model/Timer.php');
 require_once('model/UserDAL.php');
+require_once('model/WinDAL.php');
 class MasterController
 {
  
     public function init()
     {
+        
         //MODELS
         $loginModel = new LoginModel();
         $questionModel = new QuestionModel();
         $userDAL = new UserDAL();
         $adminDAL = new AdminDAL();
-        $quizModel = new QuizModel($adminDAL, $userDAL);
+        $winDAL = new WinDAL();
+        $quizModel = new QuizModel($adminDAL, $userDAL, $winDAL);
         //VIEWS
-        $quizView = new QuizView();
+        $quizView = new QuizView($winDAL);
         $navigationView = new NavigationView();
         $layoutView = new LayoutView();
         $adminView =  new AdminView($adminDAL, $userDAL);

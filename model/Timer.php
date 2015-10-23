@@ -87,7 +87,6 @@ class Timer
         $hoursToOpen = ($this->hourClose + 1) - $this->hour + $this->hourOpen;
         
         $date = new DateTime("now");
-        var_dump($date);
         $date->add(new DateInterval("P1D"));
         $date->setTime(12,0,0);
         

@@ -9,10 +9,11 @@ private static $tip2 = "QuizView::Tip2";
 private static $submitAnswer = "QuizView::SubmitAnswer";  
 private static $submitUsername = "QuizView::Username";
 private static $message;
-private static $finished;
+private static $correctAnswer;
+private static $won;
 private static $user = "user";
 
-     public function __construct()
+     public function __construct(WinDAL $winDAL)
      {
       
          $this->time = new Timer();
@@ -24,13 +25,21 @@ private static $user = "user";
          }
       
      }
-
+     /*
+     Returns a page depending on the condition.
+     */
+   
      public function render()
      {
-        if(self::$finished)
+        if(self::$correctAnswer)
         {
-           self::$finished = false;
+           self::$correctAnswer = false;
            return $this->HTMLSuccessQuizPage();
+        }
+        
+        if(self::$won)
+        {
+            return $this->HTMLWonQuizPage();
         }
      
         if($this->time->isQuizOpen())
@@ -44,13 +53,23 @@ private static $user = "user";
         }
     }
     
-    //if called -> sets finished to true.
-    public function QuizFinished()
+    /*
+    If called -> sets finished to true.
+    */
+    public function userAnsweredRight()
     {
-        self::$finished = true;
+        self::$correctAnswer = true;
     }
     
-    //Returns the SuccessPage
+    public function quizWon()
+    {
+        self::$won = true;
+    }
+    
+    /*
+     HTMLSuccessQuizPage -> Shows that the specific user has won.
+     #Input for victoryName
+    */
     public function HTMLSuccessQuizPage()
     {
      return '
@@ -70,7 +89,38 @@ private static $user = "user";
         
      ';
     }
-    //Returns the Open Quiz
+     /*
+     HTMLWonQuizPage -> Shows that the quiz is Won.
+     #Timer to next quiz
+     #Displays who won the previous.
+    */
+    public function HTMLWonQuizPage()
+    {
+     return '
+        <h3>Quiz is won for today!</h3>
+        
+        ';
+    }
+    
+    /*
+    Functions For WinPage
+    */
+    public function winPost()
+    {
+        return isset($_POST[self::$submitUsername]);
+    }
+    
+    public function getName()
+    {
+        return $_POST[self::$user];
+    }
+    
+    /*
+     HTMLOpenQuizPage -> Shows that the quiz is open.
+     #Questions
+     #Tips
+     #Input for an answer.
+    */
     public function HTMLOpenQuizPage()
     {
     
@@ -95,40 +145,12 @@ private static $user = "user";
               </footer>
         ';
     }
-    
-    //Returns the Closed Quiz
-    public function HTMLClosedQuizPage()
-    {
-    
-     return '
-            
-              <div id="quizArea">
-              <h2>The Quiz is currently closed</h2>
-              <h3>The quiz is open between 12:00 and 00:00 (Central European Time)</h3>
-              <h3>Last Winner: ---- </h3>
-              <h5>'. $this->quizOpenTimer() .'</h5>
-              </div>
-              <footer>
-              <a href=?admin>Admin Page</a>
-              </footer>
-        ';
-    }
-    
+    /*
+    Functions For HTMLOpenQuizPage
+    */
     public function post()
     {
-        if(isset($_POST[self::$submitAnswer]))
-        {
-         
-        if(isset($_COOKIE[self::$user]))
-        {
-            return true;
-        }
-        
-        }
-        else
-        {
-            return false;
-        }
+        return isset($_POST[self::$submitAnswer]) && isset($_COOKIE[self::$user]);
     }
     
     public function getAnswer()
@@ -168,23 +190,7 @@ private static $user = "user";
      
     }
     
-    public function renderSubmit()
-    {
-        if($this->triesLeft <= 0 && !is_null($this->triesLeft))
-        {
-            return '
-            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" disabled/><br>
-            ';
-        }
-        else
-        {
-           return  '
-            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" /><br>
-            '; 
-        }
-        
-    }
-    
+       
     public function triesLeft($amount)
     {
        $this->triesLeft = $amount;
@@ -206,12 +212,52 @@ private static $user = "user";
             return '';
         }
     }
-   
+    
+    public function renderSubmit()
+    {
+        if($this->triesLeft <= 0 && !is_null($this->triesLeft))
+        {
+            return '
+            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" disabled/><br>
+            ';
+        }
+        else
+        {
+           return  '
+            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" /><br>
+            '; 
+        }
+        
+    }
+ 
+    /*
+     HTMLClosedQuizPage -> Shows that the quiz is closed.
+     #Timer till quiz is open.
+    */
+    public function HTMLClosedQuizPage()
+    {
+    
+     return '
+            
+              <div id="quizArea">
+              <h2>The Quiz is currently closed</h2>
+              <h3>The quiz is open between 12:00 and 00:00 (Central European Time)</h3>
+              <h3>Last Winner: ---- </h3>
+              <h5>'. $this->quizOpenTimer() .'</h5>
+              </div>
+              <footer>
+              <a href=?admin>Admin Page</a>
+              </footer>
+        ';
+    }
+    
+    /*
+    SetMessage Functions
+    */
     public function setMessage($message)
     {
         self::$message = $message;
     }
-    
     public function wrongAnswer()
     {
         $this->setMessage("Ouch! Wrong answer.");
@@ -222,6 +268,9 @@ private static $user = "user";
         $this->setMessage("You are out of attempts for today.<br> Come back tomorrow at 12:00!");
     }
     
+    /*
+    Countdown Functions in javaScript(using Countdown.js)
+    */
     public function quizCloseTimer()
     {
      return
@@ -242,8 +291,8 @@ private static $user = "user";
      ';
     }
     
-      public function quizOpenTimer()
-     {
+    public function quizOpenTimer()
+    {
      return
      ' 
       The Quiz will open in <span id="countdown-holder"/>
