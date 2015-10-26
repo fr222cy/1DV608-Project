@@ -31,6 +31,7 @@ private static $message = "";
       '
        <div id="head">
             <h1>Admin Page</h1>
+            <hr>
        </div>
        
           <h2>Add new Question</h2>
@@ -132,13 +133,13 @@ private static $message = "";
             
             foreach ($questions as $question)
             {
-                $htmlString .=  '<tr><td>'.$count.'</td>
-                <td>|'. $question->Question(). '</td>
-                <td>|'. $question->CorrectAnswer().'|</td>';
+                $htmlString .=  '<tr><td>'.$count.'.</td>
+                <td>'. $question->Question(). '</td>
+                <td>'. $question->CorrectAnswer().'</td>';
                 $count++;
             foreach ($question->Tips() as $tips)
             {
-                $htmlString .= '<td>'. $tips . '|</td>';
+                $htmlString .= '<td>'. $tips . '</td>';
             }
                 $htmlString .= '</tr>';
             } 
@@ -160,20 +161,19 @@ private static $message = "";
               return "<h3>No Users</h3>";  
             }
             
-            $count = 1;
+            
             $htmlString = '<h3>Users on dates</h3><table>';
             
             foreach ($dates as $date)
             {
-                $htmlString .=  '<tr><td>DATE: '. $date->getQuizTime(). '</td></tr>';
+                $htmlString .=  '<tr><td><h3>'. $date->getQuizTime(). '</h3></td>';
+                $count = 0;
                 
             foreach ($date->getUsers() as $user)
             {
-                $htmlString .= '<tr><td> '.$count.'. |ID:'. $user->getUserID() . '|</td>
-                                <td> Tries Left: '. $user->getTries().'</td></tr>';
                                 $count++;
             }
-                
+                $htmlString .=  '<tr><td>Users: '. $count . '</td></tr>';
                 
             }
             

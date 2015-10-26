@@ -12,10 +12,10 @@ private static $message;
 private static $correctAnswer;
 private static $won;
 private static $user = "user";
-
+private static $lastWinner = "None";
      public function __construct(WinDAL $winDAL)
      {
-      
+         $this->wd = $winDAL;
          $this->time = new Timer();
          
          if(!isset($_COOKIE[self::$user]))
@@ -81,8 +81,8 @@ private static $user = "user";
         
           <form method="post" > 
 		   <fieldset>
-			  <input type="" id="' . self::$user . '" name="' . self::$user . '" />
-              <input type="submit" name="' . self::$submitUsername . '" value="Submit Username" /><br>
+			  <input type="" class="answerField"id="' . self::$user . '" name="' . self::$user . '" />
+              <input type="submit" class="btn-style" name="' . self::$submitUsername . '" value="Submit Username" /><br>
            </fieldset>
           </form>
         
@@ -98,6 +98,10 @@ private static $user = "user";
     {
      return '
         <h3>Quiz is won for today!</h3>
+        
+        '.$this->getLastWinner().'
+        
+        <p>Come back tomorrow at 12:00!</p>
         
         ';
     }
@@ -115,6 +119,22 @@ private static $user = "user";
         return $_POST[self::$user];
     }
     
+    public function getLastWinner()
+    {
+        
+        $wins = $this->wd->getWins();
+        
+        if(empty($wins))
+        {
+            return '';
+        }
+        $lastWin = end($wins);
+        
+        $winDate = $lastWin->getDate();
+        
+        return '<h4>The winner '.$winDate->format('Y-m-d').' was '.$lastWin->getWinningName().'!</h4>';
+    }
+    
     /*
      HTMLOpenQuizPage -> Shows that the quiz is open.
      #Questions
@@ -125,23 +145,25 @@ private static $user = "user";
     {
     
      return '
-              <div id="quizArea">
-                  <h3>'.self::$question.'</h3><br>
+              
+                  <h2>'.self::$question.'</h2><br>
                   <label>Tip 1: '.self::$tip1.'</label><br>
                   <label>Tip 2: '.self::$tip2.'</label><br>
                   <form method="post" > 
 				   <fieldset>
-				     <p>'. self::$message .'</p>
-                     <input type="" id="' . self::$answer . '" name="' . self::$answer . '" />
+				     <p id="error">'. self::$message .'</p>
+                     <input type="" class="answerField" id="' . self::$answer . '" name="' . self::$answer . '" />
                      '. $this->renderSubmit() .'
                      '.$this->renderTriesLeft().'
                    </fieldset>
                   </form>
-                  
+                  <div id="counter">
                   '. $this->quizCloseTimer() .'
-              </div>
+                  </div>
+                 
               <footer>
-              <a href=?admin>Admin Page</a>
+              <hr>
+              <a href=?admin class="hvr-skew-forward">Admin Page</a>
               </footer>
         ';
     }
@@ -150,7 +172,18 @@ private static $user = "user";
     */
     public function post()
     {
-        return isset($_POST[self::$submitAnswer]) && isset($_COOKIE[self::$user]);
+        if(isset($_POST[self::$answer]))
+        {
+            if(strlen($_POST[self::$answer]) < 1 || $_POST[self::$answer] != strip_tags($_POST[self::$answer]))
+            {
+                $this->setMessage("You need to enter a valid answer!");
+                return false;  
+            }
+            else
+            {
+                 return isset($_POST[self::$submitAnswer]) && isset($_COOKIE[self::$user]); 
+            }   
+        }
     }
     
     public function getAnswer()
@@ -218,13 +251,13 @@ private static $user = "user";
         if($this->triesLeft <= 0 && !is_null($this->triesLeft))
         {
             return '
-            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" disabled/><br>
+            <input type="submit" class="btn-styleD" name="' . self::$submitAnswer . '" value="Submit Answer" disabled/><br>
             ';
         }
         else
         {
            return  '
-            <input type="submit" name="' . self::$submitAnswer . '" value="Submit Answer" /><br>
+            <input type="submit" class="btn-style" name="' . self::$submitAnswer . '" value="Submit Answer" /><br>
             '; 
         }
         
@@ -238,15 +271,16 @@ private static $user = "user";
     {
     
      return '
-            
-              <div id="quizArea">
+              
               <h2>The Quiz is currently closed</h2>
               <h3>The quiz is open between 12:00 and 00:00 (Central European Time)</h3>
-              <h3>Last Winner: ---- </h3>
-              <h5>'. $this->quizOpenTimer() .'</h5>
-              </div>
+              
+              '.$this->getLastWinner().'
+             
+              
               <footer>
-              <a href=?admin>Admin Page</a>
+              <hr>
+              <a href=?admin class="hvr-skew-forward">Admin Page</a>
               </footer>
         ';
     }

@@ -24,7 +24,7 @@ class Timer
         $this->second = idate('i');
         
         /*Quiz Opens at 12:00:00 and closes at 23:59:59*/
-        $this->hourOpen = 12;
+        $this->hourOpen = 02;
         $this->hourClose = 23;
         $this->minuteClose = 59;
         $this->secondClose= 59;

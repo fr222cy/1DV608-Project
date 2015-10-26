@@ -9,7 +9,7 @@ class WinDAL
     {
         $this->wins = array();
         $this->binFile = 'data/win.bin';
-        
+       
         if (file_exists($this->binFile))
         {
             $this->wins = unserialize(file_get_contents($this->binFile));
@@ -20,7 +20,7 @@ class WinDAL
         }
     }
     
-    public function save($winObject)
+    public function saveWin($winObject)
     {
         
         if(empty($this->wins))
@@ -56,8 +56,9 @@ class WinDAL
         return null;
     }
     
-    public function get()
+    public function getWins()
     {
+        
         return $this->wins;
     }
     

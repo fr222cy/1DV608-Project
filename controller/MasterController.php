@@ -32,7 +32,7 @@ class MasterController
         $quizView = new QuizView($winDAL);
         $navigationView = new NavigationView();
         $layoutView = new LayoutView();
-        $adminView =  new AdminView($adminDAL, $userDAL);
+        $adminView =  new AdminView($adminDAL, $userDAL, $winDAL);
         $loginView = new LoginView();
         //CONTROLLERS
         $adminController = new AdminController($adminView, $layoutView, $questionModel, $adminDAL);

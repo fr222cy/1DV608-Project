@@ -23,6 +23,7 @@ private static $message;
       '
        <div id="head">
             <h1>Admin Login</h1>
+            <hr>
        </div>
               
           <div id="LoginArea">
@@ -38,8 +39,10 @@ private static $message;
 			</form>
                   
               </div>
+              
               <footer>
-              <a href=?>Back To Quiz!</a>
+              <hr>
+              <a href=? class="hvr-skew-backward">Back To Quiz!</a>
               </footer>
       '; 
     }

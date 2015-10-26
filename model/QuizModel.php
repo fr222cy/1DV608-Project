@@ -49,12 +49,13 @@ class QuizModel
             
             $this->triesLeft = $user->getTries();
             
-            //This is quite an "Ugly hack" but it works :)
+
             if($this->triesLeft <= 0 && !$this->isCorrectAnswer($answer))
             {
+                
                 return false;
             }
-            
+           
             $users[$user->getUserID()] = $user;
         }
         else
@@ -122,7 +123,8 @@ class QuizModel
     public function closeQuiz($winningName)
     {
         $winObject = new Win($winningName);
-        $this->winDAL->save($winObject);
+        $this->winDAL->saveWin($winObject);
+        header('Location:?');
     }
     
     
