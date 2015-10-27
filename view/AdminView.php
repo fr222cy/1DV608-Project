@@ -13,6 +13,7 @@ private static $logout = "AdminView::Logout";
 private static $showQuestions = "AdminView::ShowQuestions";
 private static $showUsers = "AdminView::ShowUsers";
 private static $showWinners = "AdminView::ShowWinners";
+private static $clearWinners = "AdminView::ClearWinners";
 private static $message = "";
 
     public function __construct(AdminDAL $ad, UserDAL $ud, WinDAL $wd)
@@ -62,6 +63,7 @@ private static $message = "";
 			<input type="submit" name="' . self::$showQuestions . '" value="Show questions" />
 			<input type="submit" name="' . self::$showUsers . '" value="Show users" />
 			<input type="submit" name="' . self::$showWinners . '" value="Show winners" />
+			<input type="submit" name="' . self::$clearWinners . '" value="Clear ALL winners" />
 			
 			</form>
 			
@@ -69,6 +71,7 @@ private static $message = "";
             '. $this->showQuestions() .' 
             '. $this->showUsers() .'  
             '. $this->showWinners() .'
+            '. $this->clearWinners().'
             </div>
       ';
     }
@@ -124,6 +127,14 @@ private static $message = "";
         else
         {
             return false;
+        }
+    }
+    
+    public function clearWinners()
+    {
+        if(isset($_POST[self::$clearWinners]))
+        {
+            $this->wd->clear();
         }
     }
     

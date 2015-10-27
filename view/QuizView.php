@@ -158,7 +158,7 @@ private static $lastWinner = "None";
                   <form method="post" > 
 				   <fieldset>
 				     <p id="error">'. self::$message .'</p>
-                     <input type="" class="answerField" id="' . self::$answer . '" name="' . self::$answer . '" />
+                     <input type="text" class="answerField" id="' . self::$answer . '" name="' . self::$answer . '" />
                      '. $this->renderSubmit() .'
                      '.$this->renderTriesLeft().'
                    </fieldset>
@@ -315,7 +315,7 @@ private static $lastWinner = "None";
     {
      return
      ' 
-      The Quiz will close in <span id="countdown-holder"/>
+      The Quiz will close in <span id="countdown-holder"></span>
       <script>
       var clock = document.getElementById("countdown-holder")
       , targetDate = new Date();
@@ -335,7 +335,7 @@ private static $lastWinner = "None";
     {
      return
      ' 
-      The Quiz will open in <span id="countdown-holder"/>
+      The Quiz will open in <span id="countdown-holder"></span>
       <script>
       var clock = document.getElementById("countdown-holder")
       , targetDate = new Date();

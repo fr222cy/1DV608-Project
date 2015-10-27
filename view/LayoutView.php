@@ -20,7 +20,7 @@ class LayoutView
             <body>
             
             <div id="container">
-              <img src="style/your-daily-quiz.png"></img>
+              <img src="style/your-daily-quiz.png" alt="Your Daily Quiz">
             
               '. $v->render().'
             </div>
