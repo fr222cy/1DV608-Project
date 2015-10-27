@@ -25,6 +25,14 @@ class QuestionModel
             throw new Exception("No tip was given.");
         }
         
+        if($question != strip_tags($question)
+        || $correctAnswer != strip_tags($correctAnswer)
+        || $tips[0] != strip_tags($tips[0])
+        || $tips[1] != strip_tags($tips[1]))
+        {
+           throw new Exception("No Tags >:("); 
+        }
+        
         $questionObject = new Question($question, $tips, $correctAnswer);
         
         return $questionObject;

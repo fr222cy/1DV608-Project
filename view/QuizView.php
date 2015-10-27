@@ -103,6 +103,12 @@ private static $lastWinner = "None";
         
         <p>Come back tomorrow at 12:00!</p>
         
+        <footer>
+        <hr>
+        <a href=?admin class="hvr-skew-forward">Admin Page</a>
+        </footer>
+        
+        
         ';
     }
     

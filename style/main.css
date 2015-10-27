@@ -35,6 +35,18 @@ form
   
 }
 
+#adminShow
+{
+	margin-top:5%;
+	margin-left:10%;
+	max-height:200px;
+	overflow-y:scroll;
+	background-color:#e6e6e6;
+	border:1px solid black;
+}
+
+
+
 #counter
 {
     margin-top:10%;

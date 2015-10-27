@@ -12,12 +12,14 @@ private static $submit = "AdminView::Submit";
 private static $logout = "AdminView::Logout";
 private static $showQuestions = "AdminView::ShowQuestions";
 private static $showUsers = "AdminView::ShowUsers";
+private static $showWinners = "AdminView::ShowWinners";
 private static $message = "";
 
-    public function __construct(AdminDAL $ad, UserDAL $ud)
+    public function __construct(AdminDAL $ad, UserDAL $ud, WinDAL $wd)
     {
         $this->ad = $ad;
         $this->ud = $ud;
+        $this->wd = $wd;
     }
 
     public function render()
@@ -57,14 +59,17 @@ private static $message = "";
 				</fieldset>
 				
 			<input type="submit" name="' . self::$logout . '" value="Logout" />
-			<input type="submit" name="' . self::$showQuestions . '" value="Show Questions" />
+			<input type="submit" name="' . self::$showQuestions . '" value="Show questions" />
 			<input type="submit" name="' . self::$showUsers . '" value="Show users" />
-			
+			<input type="submit" name="' . self::$showWinners . '" value="Show winners" />
 			
 			</form>
+			
+			<div id="adminShow">
             '. $this->showQuestions() .' 
             '. $this->showUsers() .'  
-            
+            '. $this->showWinners() .'
+            </div>
       ';
     }
     
@@ -134,12 +139,12 @@ private static $message = "";
             foreach ($questions as $question)
             {
                 $htmlString .=  '<tr><td>'.$count.'.</td>
-                <td>'. $question->Question(). '</td>
-                <td>'. $question->CorrectAnswer().'</td>';
+                <td>Question: '. $question->Question(). '</td>
+                <td>| Answer: '. $question->CorrectAnswer().'| Tips: </td> ';
                 $count++;
             foreach ($question->Tips() as $tips)
             {
-                $htmlString .= '<td>'. $tips . '</td>';
+                $htmlString .= '<td>'. $tips . '| </td>';
             }
                 $htmlString .= '</tr>';
             } 
@@ -181,5 +186,28 @@ private static $message = "";
             
             return $htmlString; 
         }
+    }
+    public function showWinners()
+    {
+        if(isset($_POST[self::$showWinners]))
+        {
+            $wins = $this->wd->getWins();
+             if(empty($wins))
+            {
+              return "<h3>No Winners</h3>";  
+            }
+            $htmlString = '<h3>Winners and dates</h3><table>';
+            
+            foreach ($wins as $win)
+            {
+                $htmlString .=  '<tr>
+                <td>'. $win->getWinningName().'</td>
+                <td>'. $win->getDate()->format('Y-m-d').'</td>';
+                
+            }
+            
+            return $htmlString;
+        }
+        
     }
 }

@@ -14,7 +14,7 @@ class AdminDAL
         $this->questions = array();
         $this->binFile = 'data/questions.bin';
     }
-    //Saves the Questioobject to questions.bin.
+    //Saves the Questionobject to questions.bin.
     public function saveQuestion($questionObject)
     {
         $this->questions = $this->getQuestions();
